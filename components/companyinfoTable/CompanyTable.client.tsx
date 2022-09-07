@@ -19,24 +19,21 @@ import CompanyMenu from './CompanyMenu'
 import SearchNotFound from './../notFound/SearchNotFound'
 
 interface Props {
-  databases: any
+  scripts: any
 }
 
 const TABLE_HEAD = [
-  { id: 'SEQNO', label: 'SEQNO', alignRight: false },
-  { id: 'PATH', label: '회사이름' },
-  { id: 'COMPANYCODE', label: '회사코드' },
-  { id: 'COMPANYNO', label: '회사 번호', alignRight: false },
-  { id: 'REGISTED_IP', label: '등록된 IP수', alignRight: false },
-  { id: 'CDATETIME', label: '가입날짜', alignRight: false },
+  { id: 'KEY', label: 'KEY', alignRight: false },
+  { id: 'VALUE', label: 'VALUE' },
   { id: '' },
 ]
 
-const CompanyTable = ({
-  databases: {
-    getDatabases: { databases },
-  },
-}: Props) => {
+const CompanyTable = ({ scripts }: Props) => {
+  const objectLength = Object.keys(scripts).length
+  const objectEntries = Object.entries(scripts)
+  console.log('objectLength: ', objectLength)
+  console.log('objectEntries: ', objectEntries)
+
   const [page, setPage] = useState<number>(0)
   const [order, setOrder] = useState<string>('desc')
   const [orderBy, setOrderBy] = useState<string>('COMPANYNO')
@@ -65,15 +62,17 @@ const CompanyTable = ({
   }
 
   const emptyRows =
-    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - databases.length) : 0
+    page > 0 ? Math.max(0, (1 + page) * rowsPerPage - objectLength) : 0
 
   const filteredCompany = applySortFilter(
-    databases,
+    objectEntries,
     getComparator(order, orderBy),
     filterName,
   )
 
   const isUserNotFound = filteredCompany.length === 0
+
+  console.log('isUserNotFound: ', isUserNotFound)
 
   const handleRegist = useCallback(() => {
     router.push('/addCompany')
@@ -103,15 +102,7 @@ const CompanyTable = ({
               {filteredCompany
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const {
-                    SEQNO,
-                    PATH,
-                    COMPANYCODE,
-                    COMPANYNO,
-                    countedIP,
-                    CDATETIME,
-                  } = row
-
+                  const [key, value] = row
                   return (
                     <TableRow hover key={index} tabIndex={-1}>
                       <TableCell
@@ -120,19 +111,15 @@ const CompanyTable = ({
                         scope="row"
                         padding="none"
                       >
-                        {SEQNO}
+                        {key}
                       </TableCell>
-                      <TableCell>{PATH}</TableCell>
-                      <TableCell align="left">{COMPANYCODE}</TableCell>
-                      <TableCell align="left">{COMPANYNO}</TableCell>
-                      <TableCell align="left">{countedIP}</TableCell>
-                      <TableCell align="left">{CDATETIME}</TableCell>
+                      <TableCell align="left">{value}</TableCell>
 
                       <TableCell align="right" className="companyMenuList">
                         <CompanyMenu
-                          dbname={`videohelp_${COMPANYCODE}`}
-                          path={PATH}
-                          companyno={COMPANYNO}
+                        // dbname={`videohelp_DBNAME`}
+                        // path={PATH}
+                        // companyno={COMPANYNO}
                         />
                       </TableCell>
                     </TableRow>
@@ -159,7 +146,7 @@ const CompanyTable = ({
         <TablePagination
           rowsPerPageOptions={[5, 10, 25]}
           component="div"
-          count={databases.length}
+          count={objectLength}
           rowsPerPage={rowsPerPage}
           page={page}
           onPageChange={handleChangePage}

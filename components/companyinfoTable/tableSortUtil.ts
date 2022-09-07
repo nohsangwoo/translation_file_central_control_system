@@ -1,7 +1,10 @@
 import { filter } from 'lodash'
 
 export const applySortFilter = (array: any[], comparator: any, query: any) => {
+  console.log('array: ', array)
+  // const stabilizedThis = array.map((el: any, index) => [el, index])
   const stabilizedThis = array.map((el: any, index) => [el, index])
+
   stabilizedThis.sort((a: any, b: any) => {
     const order = comparator(a[0], b[0])
     if (order !== 0) return order
