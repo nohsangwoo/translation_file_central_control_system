@@ -13,7 +13,7 @@ export const applySortFilter = (array: any[], comparator: any, query: any) => {
   if (query) {
     return filter(array, (_user: any) => {
       console.log('_user: ', _user)
-      return _user.PATH.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      return _user.value.toLowerCase().indexOf(query.toLowerCase()) !== -1
     })
   }
   return stabilizedThis.map((el: any) => el[0])
