@@ -4,14 +4,29 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 const fs = require('fs')
 import data from './../../public/lang/gotalk/ko.json'
 
-type Data = {
-  result: any
+export type getScriptResult = {
+  // result: {
+  //   key: string
+  //   value: string
+  // }[]
+  result: string
 }
 
 export default function handler(
   req: NextApiRequest,
-  res: NextApiResponse<Data>,
+  res: NextApiResponse<getScriptResult>,
 ) {
-  // console.log('data: ')
-  res.status(200).json({ result: data })
+  const objectEntries = Object.entries(data)
+
+  console.log('objectEntries: ', objectEntries)
+
+  const result = objectEntries.map(data => {
+    const [key, value] = data
+    return {
+      key,
+      value,
+    }
+  })
+
+  res.status(200).json({ result: JSON.stringify(result) })
 }

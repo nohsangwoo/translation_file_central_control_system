@@ -28,9 +28,8 @@ const TABLE_HEAD = [
   { id: '' },
 ]
 
-const CompanyTable = ({ scripts }: Props) => {
-  const objectLength = Object.keys(scripts).length
-  const objectEntries = Object.entries(scripts)
+const CompanyTable = ({ scripts: objectEntries }: Props) => {
+  const objectLength = objectEntries.length
   console.log('objectLength: ', objectLength)
   console.log('objectEntries: ', objectEntries)
 
@@ -102,7 +101,7 @@ const CompanyTable = ({ scripts }: Props) => {
               {filteredCompany
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const [key, value] = row
+                  const { key, value } = row
                   return (
                     <TableRow hover key={index} tabIndex={-1}>
                       <TableCell

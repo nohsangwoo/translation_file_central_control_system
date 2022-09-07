@@ -1,38 +1,34 @@
 import type { InferGetServerSidePropsType, NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
 import styles from 'src/styles/Home.module.css'
 import axios from 'axios'
 import CompanyTable from 'components/companyinfoTable/CompanyTable.client'
-import { useState } from 'react'
+import { dehydrate, useQuery } from '@tanstack/react-query'
+import { queryClient } from 'src/api'
 
+export const onFetch = async () => {
+  const result = await axios.get('http://localhost:3000/api/getScripts')
+  return JSON.parse(result.data.result)
+}
 const Home = (
   props: InferGetServerSidePropsType<typeof getServerSideProps>,
 ) => {
-  const [data, setData] = useState<any>([])
-  const onFetch = async () => {
-    axios.get('http://localhost:3000/api/getScripts').then(res => {
-      console.log(res.data)
-      setData(res.data.result)
-    })
-  }
+  const { data, refetch, isLoading } = useQuery(['getScript'], onFetch)
 
-  console.log('scripts: ', props.data)
+  console.log('fetching scriptsdata : ', data)
 
   return (
     <div className={styles.container}>
-      {props.data && <CompanyTable scripts={props.data} />}
+      {data && <CompanyTable scripts={data} />}
       <button onClick={onFetch}>fetch data</button>
     </div>
   )
 }
 
 export async function getServerSideProps() {
-  const res = await axios.get('http://localhost:3000/api/getScripts')
-  const data = res.data.result
+  await queryClient.prefetchQuery(['getScript'], () => onFetch())
   return {
     props: {
-      data,
+      dehydratedState: dehydrate(queryClient),
     },
   }
 }
