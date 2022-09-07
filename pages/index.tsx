@@ -7,7 +7,7 @@ import { queryClient } from 'src/api'
 
 export const onFetch = async () => {
   const result = await axios.get(
-    `http://localhost:3000/api/getScripts?platform=${'gotalk'}&country=${'zh'}`,
+    `http://localhost:3000/api/getScripts?platform=${'gotalk'}&country=${'ko'}`,
   )
   return JSON.parse(result.data.result)
 }

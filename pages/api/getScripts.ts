@@ -31,23 +31,16 @@ export default function handler(
     'zh',
   ]
 
-  // client ko 가져오기
-  const scriptFileOfClient = fs
-    .readFileSync('public/lang/gotalk/' + 'zh.json')
-    .toString()
+  console.log('req query: ', req.query)
 
-  console.log(
-    'scriptFileOfClient: ',
-    JSON.parse(scriptFileOfClient)['pricing.newfeature.29.text'],
-  )
-
-  const getScript = (platform: string, country: string) => {
-    const selectScript = (p: string, c: string) => {
+  type query = string | string[] | undefined
+  const getScript = (platform: query, country: query) => {
+    const importScript = (p: query, c: query) => {
       return JSON.parse(
         fs.readFileSync(`public/lang/${p}/` + `${c}.json`).toString(),
       )
     }
-    return Object.entries(selectScript(platform, country))
+    return Object.entries(importScript(req.query.platform, req.query.country))
   }
 
   const objectEntries = getScript('gotalk', 'zh')
