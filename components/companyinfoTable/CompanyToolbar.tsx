@@ -9,7 +9,7 @@ import {
   InputAdornment,
   Button,
 } from '@mui/material'
-import { MouseEvent, MouseEventHandler } from 'react'
+import { ChangeEvent, MouseEvent, MouseEventHandler } from 'react'
 import { useSetClientState } from 'Hooks/useSetClientState'
 import { useClientValue } from 'Hooks/useClientValue'
 
@@ -39,16 +39,16 @@ const SearchStyle = styled(OutlinedInput)(({ theme }: any) => ({
 
 interface Props {
   // numSelected: number
-  filterName: string
-  onFilterName: (value: string) => void
+  filterValue: string
+  onFilterValue: (event: ChangeEvent<HTMLInputElement>) => void
   registKind: string
   handleRegist: () => void
 }
 
 export default function CompanyToolbar({
   // numSelected,
-  filterName,
-  onFilterName,
+  filterValue,
+  onFilterValue,
   registKind,
   handleRegist,
 }: Props) {
@@ -77,9 +77,9 @@ export default function CompanyToolbar({
   return (
     <RootStyle>
       <SearchStyle
-        value={filterName}
+        value={filterValue}
         // @ts-ignore
-        onChange={onFilterName}
+        onChange={onFilterValue}
         placeholder="검색할 회사이름을 입력하세요."
         className="searchCompany"
         startAdornment={

@@ -1,5 +1,11 @@
 import { useRouter } from 'next/router'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, {
+  ChangeEvent,
+  useCallback,
+  useEffect,
+  useRef,
+  useState,
+} from 'react'
 import {
   Card,
   Table,
@@ -17,6 +23,7 @@ import CompanyToolbar from './CompanyToolbar'
 import CompanyHead from './CompanyHead'
 import CompanyMenu from './CompanyMenu'
 import SearchNotFound from './../notFound/SearchNotFound'
+import { debounce } from 'lodash'
 
 interface Props {
   scripts: any
@@ -36,8 +43,9 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
   const [page, setPage] = useState<number>(0)
   const [order, setOrder] = useState<string>('desc')
   const [orderBy, setOrderBy] = useState<string>('COMPANYNO')
-  const [filterName, setFilterName] = useState<string>('')
+  const [filterValue, setFilterValue] = useState<string>('')
   const [rowsPerPage, setRowsPerPage] = useState<number>(10)
+  const [viewFilterValue, setViewFilterValue] = useState<string>('')
 
   const router = useRouter()
 
@@ -56,17 +64,38 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
     setPage(0)
   }
 
-  const handleFilterByName = (event: any) => {
-    setFilterName(event.target.value)
+  // debounce set filename
+
+  // debounce를 활용하여 viewFilterValue이 변경되었을때 700ms 이후에 변경되게 한다.
+  const debouncedSetFilterValue = useRef(
+    debounce(value => {
+      setFilterValue(value)
+    }, 700),
+  ).current
+
+  useEffect(() => {
+    return () => {
+      debouncedSetFilterValue.cancel()
+    }
+  }, [debouncedSetFilterValue])
+
+  useEffect(() => {
+    debouncedSetFilterValue(viewFilterValue)
+  }, [debouncedSetFilterValue, viewFilterValue])
+
+  // 일반 onchange를 위한 setValue
+  const onChangeViewFilterValue = (event: ChangeEvent<HTMLInputElement>) => {
+    setViewFilterValue(event.target.value)
   }
 
+  // --end of debounce
   const emptyRows =
     page > 0 ? Math.max(0, (1 + page) * rowsPerPage - objectLength) : 0
 
   const filteredCompany = applySortFilter(
     objectEntries,
     getComparator(order, orderBy),
-    filterName,
+    filterValue,
   )
 
   const isUserNotFound = filteredCompany.length === 0
@@ -81,8 +110,8 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
     <>
       <Card className="CompanyTableCard">
         <CompanyToolbar
-          filterName={filterName}
-          onFilterName={handleFilterByName}
+          filterValue={viewFilterValue}
+          onFilterValue={onChangeViewFilterValue}
           registKind="company"
           handleRegist={handleRegist}
         />
@@ -134,7 +163,7 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
               <TableBody>
                 <TableRow>
                   <TableCell align="center" colSpan={6} sx={{ py: 3 }}>
-                    <SearchNotFound searchQuery={filterName} />
+                    <SearchNotFound searchQuery={filterValue} />
                   </TableCell>
                 </TableRow>
               </TableBody>
