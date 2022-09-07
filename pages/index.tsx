@@ -6,7 +6,9 @@ import { dehydrate, useQuery } from '@tanstack/react-query'
 import { queryClient } from 'src/api'
 
 export const onFetch = async () => {
-  const result = await axios.get('http://localhost:3000/api/getScripts')
+  const result = await axios.get(
+    `http://localhost:3000/api/getScripts?platform=${'gotalk'}&country=${'zh'}`,
+  )
   return JSON.parse(result.data.result)
 }
 const Home = (
