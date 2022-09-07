@@ -12,8 +12,11 @@ export const applySortFilter = (array: any[], comparator: any, query: any) => {
   })
   if (query) {
     return filter(array, (_user: any) => {
-      console.log('_user: ', _user)
-      return _user.value.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      const searchKey =
+        _user.key.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      const searchValue =
+        _user.value.toLowerCase().indexOf(query.toLowerCase()) !== -1
+      return searchKey || searchValue
     })
   }
   return stabilizedThis.map((el: any) => el[0])
