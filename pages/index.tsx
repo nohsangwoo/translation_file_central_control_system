@@ -5,7 +5,7 @@ import styles from "../styles/Home.module.css";
 
 const Home: NextPage = () => {
   const onFetch = async () => {
-    const res = await fetch("http://localhost:3000/api/hello");
+    const res = await fetch("http://localhost:3000/api/getScripts");
     const data = await res.json();
     console.log(data);
   };
