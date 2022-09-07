@@ -22,33 +22,17 @@ const Home = (
     onFetch(platform),
   )
 
-  const countrys = [
-    'ko',
-    'en',
-    'ar',
-    'de',
-    'es',
-    'fr',
-    'ja',
-    'pt-BR',
-    'ru',
-    'tr',
-    'vi',
-    'zh_TW',
-    'zh',
-  ]
-
   return (
     <div className={styles.container}>
       <select
+        defaultValue={platform}
         onChange={e => {
-          console.log(e.target.value)
           setPlatform(e.target.value)
         }}
       >
         {platforms.map((data, index) => {
           return (
-            <option key={index} value={data} selected={index === 0}>
+            <option key={index} value={data}>
               {data}
             </option>
           )

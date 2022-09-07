@@ -6,12 +6,27 @@ const fs = require('fs')
 export type getScriptResult = {
   result: string
 }
+type query = string | string[] | undefined
 
 export default function handler(
   req: NextApiRequest,
   res: NextApiResponse<getScriptResult>,
 ) {
-  type query = string | string[] | undefined
+  const countrys = [
+    'ko',
+    'en',
+    'ar',
+    'de',
+    'es',
+    'fr',
+    'ja',
+    'pt-BR',
+    'ru',
+    'tr',
+    'vi',
+    'zh_TW',
+    'zh',
+  ]
   const getScript = (platform: query, country: query) => {
     const importScript = (p: query, c: query) => {
       return JSON.parse(
