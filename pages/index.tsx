@@ -39,6 +39,7 @@ const Home = (
         })}
       </select>
       {data && <CompanyTable scripts={data} />}
+      <button onClick={() => refetch()}>refetch</button>
     </div>
   )
 }

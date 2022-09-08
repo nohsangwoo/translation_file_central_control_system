@@ -109,6 +109,7 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
     objectEntries,
     getComparator(order, orderBy),
     filterValue,
+    extractLangColumnList,
   )
 
   const isUserNotFound = filteredCompany.length === 0

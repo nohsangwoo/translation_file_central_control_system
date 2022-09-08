@@ -94,16 +94,19 @@ export default function handler(
   let mergedData: any[] = []
 
   vh_countrys.forEach((country, index) => {
-    console.log('country', country)
-    const result = hashTableInArray[index].map((eachRow, index) => {
+    let result = hashTableInArray[index].map((eachRow, index) => {
       if (eachRow?.key === mergedData?.[index]?.key) {
         return {
-          key: eachRow?.key,
-          ...eachRow?.value,
-          ...mergedData?.[index].value,
+          key: eachRow?.key + 'in',
+          // ...mergedData?.[index]?.value,
+          // ...eachRow?.value,
         }
       }
-      return eachRow
+      return {
+        key: eachRow.key + 'out',
+        // ...mergedData?.[index]?.value,
+        ...eachRow?.value,
+      }
     })
     mergedData = [...result]
   })
