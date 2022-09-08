@@ -37,26 +37,78 @@ export default function handler(
     return Object.entries(importScript(platform, country))
   }
 
-  const objectEntries = getScript(req.query.platform, 'ko')
-
   const getObjectEntries = (platform: query) => {
-    const result = vh_countrys.map(lang => {
+    // #1.
+    // [
+    //   [
+    //    [key,value],
+    //    [key,value],
+    //    [key,value],
+    //    ...
+    //   ],
+    //   [
+    //    [key,value],
+    //    [key,value],
+    //    [key,value],
+    //    ...
+    //   ]
+    // ] 형식으로 변환...
+    const objEntries = vh_countrys.map(lang => {
       return getScript(platform, lang)
     })
-    return result
+
+    // #2.
+    // [
+    //  [
+    //    {key:key, value:{ko:"script"},
+    //    {key:key, value:{ko:"script"},
+    //    {key:key, value:{ko:"script"},
+    //    ....
+    //   ],
+    //  [
+    //    {key:key, value:{en:"script"},
+    //    {key:key, value:{en:"script"},
+    //    {key:key, value:{en:"script"},
+    //    ....
+    //   ]
+    // ]
+    // 형식으로 변환
+    const makeEntriesInArray = objEntries.map((obj, index) => {
+      const makeHashTable = obj.map(eachRow => {
+        const [key, value] = eachRow
+        return {
+          key,
+          value: { [vh_countrys[index]]: value },
+        }
+      })
+      return makeHashTable
+    })
+
+    return makeEntriesInArray
   }
 
-  const test = getObjectEntries(req.query.platform)
+  const hashTableInArray = getObjectEntries(req.query.platform)
 
-  console.log('test result: ', test)
+  // console.log('hashTableInArray: ', hashTableInArray[0][0].key)
 
-  const result = objectEntries.map(data => {
-    const [key, value] = data
-    return {
-      key,
-      value,
-    }
+  let mergedData: any[] = []
+
+  vh_countrys.forEach((country, index) => {
+    console.log('country', country)
+    const result = hashTableInArray[index].map((eachRow, index) => {
+      if (eachRow?.key === mergedData?.[index]?.key) {
+        return {
+          key: eachRow?.key,
+          ...eachRow?.value,
+          ...mergedData?.[index].value,
+        }
+      }
+      return eachRow
+    })
+    mergedData = [...result]
   })
 
-  res.status(200).json({ result: JSON.stringify(result) })
+  console.log('mergedData: ', mergedData)
+
+  res.status(200).json({ result: JSON.stringify(mergedData) })
 }

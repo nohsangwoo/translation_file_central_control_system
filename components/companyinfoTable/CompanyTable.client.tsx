@@ -29,22 +29,35 @@ interface Props {
   scripts: any
 }
 
-const TABLE_HEAD = [
-  { id: 'KEY', label: 'KEY', alignRight: false },
-  { id: 'VALUE', label: 'VALUE' },
-  { id: '' },
-]
-
 const CompanyTable = ({ scripts: objectEntries }: Props) => {
   const objectLength = objectEntries.length
+  const extractLangColumnList = Object.keys(objectEntries[0]).filter(
+    key => key != 'key',
+  )
   console.log('objectLength: ', objectLength)
   console.log('objectEntries: ', objectEntries)
+
+  console.log()
+  const makeLangColumns = (LangList: string[]) => {
+    const result = LangList.map(data => {
+      return {
+        id: data.toUpperCase(),
+        label: data.toUpperCase(),
+      }
+    })
+    return result
+  }
+
+  const TABLE_HEAD = [
+    { id: 'KEY', label: 'KEY', alignRight: false },
+    ...makeLangColumns(extractLangColumnList),
+  ]
 
   const [page, setPage] = useState<number>(0)
   const [order, setOrder] = useState<string>('desc')
   const [orderBy, setOrderBy] = useState<string>('COMPANYNO')
   const [filterValue, setFilterValue] = useState<string>('')
-  const [rowsPerPage, setRowsPerPage] = useState<number>(10)
+  const [rowsPerPage, setRowsPerPage] = useState<number>(25)
   const [viewFilterValue, setViewFilterValue] = useState<string>('')
 
   const router = useRouter()
@@ -130,7 +143,8 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
               {filteredCompany
                 .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
                 .map((row, index) => {
-                  const { key, value } = row
+                  console.log('row: ', row)
+                  const { key } = row
                   return (
                     <TableRow hover key={index} tabIndex={-1}>
                       <TableCell
@@ -141,7 +155,13 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
                       >
                         {key}
                       </TableCell>
-                      <TableCell align="left">{value}</TableCell>
+                      {extractLangColumnList.map((lang, index) => {
+                        return (
+                          <TableCell key={index} align="left">
+                            {row[lang]}
+                          </TableCell>
+                        )
+                      })}
 
                       <TableCell align="right" className="companyMenuList">
                         <CompanyMenu
@@ -172,7 +192,7 @@ const CompanyTable = ({ scripts: objectEntries }: Props) => {
         </TableContainer>
 
         <TablePagination
-          rowsPerPageOptions={[5, 10, 25]}
+          rowsPerPageOptions={[25, 50, 100]}
           component="div"
           count={objectLength}
           rowsPerPage={rowsPerPage}
